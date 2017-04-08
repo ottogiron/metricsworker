@@ -24,9 +24,9 @@ _testmain.go
 *.prof
 
 .glide
-workr-*
-workr
-workr.tgz
+metricsworker-*
+metricsworker
+metricsworker.tgz
 .test_repository_*
 .DS_Store
 .idea

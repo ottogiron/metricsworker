@@ -1,2 +1,2 @@
-package: github.com/ottogiron/workr
+package: github.com/ottogiron/metricsworker
 import: []

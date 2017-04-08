@@ -1,15 +1,15 @@
 # Meta info
-NAME := workr
+NAME := metricsworker
 VERSION := 0.1.0
 MAINTAINER := "Otto Giron <ottog2486@gmail.com"
-SOURCE_URL := https://github.com/ottogiron/workr
+SOURCE_URL := https://github.com/ottogiron/metricsworker
 DATE := $(shell date -u +%Y%m%d.%H%M%S)
 COMMIT_ID := $(shell git rev-parse --short HEAD)
 GIT_REPO := $(shell git config --get remote.origin.url)
 # Go tools flags
-LD_FLAGS := -X github.com/ottogiron/workr/md.buildVersion=$(VERSION)
-LD_FLAGS += -X github.com/ottogiron/workr/md.buildCommit=$(COMMIT_ID)
-LD_FLAGS += -X github.com/ottogiron/workr/md.buildDate=$(DATE)
+LD_FLAGS := -X github.com/ottogiron/metricsworker/md.buildVersion=$(VERSION)
+LD_FLAGS += -X github.com/ottogiron/metricsworker/md.buildCommit=$(COMMIT_ID)
+LD_FLAGS += -X github.com/ottogiron/metricsworker/md.buildDate=$(DATE)
 EXTRA_BUILD_VARS := CGO_ENABLED=0 GOARCH=amd64
 SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
 
@@ -45,8 +45,8 @@ binary-linux:
 
 
 package-darwin: binary-darwin
-	@tar -czf build/dist/workr.darwin-amd64.tar.gz -C build/dist/darwin workr
+	@tar -czf build/dist/metricsworker.darwin-amd64.tar.gz -C build/dist/darwin metricsworker
 
 
 package-linux: binary-linux
-	@tar -czf build/dist/workr.linux-amd64.tar.gz -C build/dist/linux workr
+	@tar -czf build/dist/metricsworker.linux-amd64.tar.gz -C build/dist/linux metricsworker
