@@ -1,5 +1,5 @@
 # Meta info
-NAME := metricsworker
+NAME := mworker
 VERSION := 0.1.0
 MAINTAINER := "Otto Giron <ottog2486@gmail.com"
 SOURCE_URL := https://github.com/ottogiron/metricsworker
