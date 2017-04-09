@@ -45,8 +45,8 @@ binary-linux:
 
 
 package-darwin: binary-darwin
-	@tar -czf build/dist/metricsworker.darwin-amd64.tar.gz -C build/dist/darwin metricsworker
+	@tar -czf build/dist/metricsworker.darwin-amd64.tar.gz -C build/dist/darwin mworker
 
 
 package-linux: binary-linux
-	@tar -czf build/dist/metricsworker.linux-amd64.tar.gz -C build/dist/linux metricsworker
+	@tar -czf build/dist/metricsworker.linux-amd64.tar.gz -C build/dist/linux mworker
