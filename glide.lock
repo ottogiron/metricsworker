@@ -1,4 +1,10 @@
-hash: be9e34e48ef97cd8bd80b36b2d383500b7fa162308086738721a24cf8dd9c4fb
-updated: 2017-04-05T22:28:31.720150857-06:00
-imports: []
+hash: 0364da5a73185c27e129992039430d13728d79fd4ec8656a0503c8d1962ab251
+updated: 2017-04-08T18:48:17.765639443-06:00
+imports:
+- name: github.com/ferrariframework/ferrariworker
+  version: edfe9f005587c49537407fee0b7ffc570c6039f5
+  subpackages:
+  - processor
+- name: github.com/spf13/cast
+  version: 24b6558033ffe202bf42f0f3b870dcc798dd2ba8
 testImports: []
