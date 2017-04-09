@@ -165,18 +165,6 @@ func Test_processor_process(t *testing.T) {
 	}
 }
 
-func testTasksResultChan(taskResults ...taskResult) <-chan taskResult {
-	out := make(chan taskResult)
-	go func() {
-		for _, taskResult := range taskResults {
-			out <- taskResult
-		}
-		close(out)
-	}()
-
-	return out
-}
-
 type mockWorker struct {
 	err error
 }
