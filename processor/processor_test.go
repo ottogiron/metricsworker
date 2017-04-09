@@ -150,8 +150,15 @@ func Test_processor_process(t *testing.T) {
 				gotTasksResults = append(gotTasksResults, gotTaskResult)
 			}
 
-			if !reflect.DeepEqual(gotTasksResults, tt.want) {
-				t.Errorf("processor.Process() = %v want %v ", gotTasksResults, tt.want)
+			for _, wantResult := range tt.want {
+				//find the wanted result in got results secuencially, since the same order cannot be guaranted
+				for _, gotResult := range gotTasksResults {
+					if wantResult.workerID == gotResult.workerID {
+						if !reflect.DeepEqual(gotResult, wantResult) {
+							t.Errorf("processor.Process() = %v want %v ", gotResult, wantResult)
+						}
+					}
+				}
 			}
 
 		})
