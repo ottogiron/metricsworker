@@ -13,3 +13,6 @@ deploy:
     - build/dist/mworker.darwin-amd64.tar.gz
     - build/dist/mworker.linux-amd64.tar.gz
   skip_cleanup: true
+  on:
+    go: 1.8
+    tags: true
