@@ -9,7 +9,7 @@ deploy:
   provider: releases
   api_key:
     secure: gwP1B3aG8fNi6eU3D1puHdD2tefpWqVMzjO8yOvhpEFjAwU+UoTepbMES/U2okd8gxD5Uc8YWpvwNEO6RXNIofIj9hKKbiWronczSqq3zWyGuPOtEZKusQAjdm6Pz95tTtTHF/iOGpFe1ZzMPnjJyWOAjmaFthXxrw6RY6UGq3JKTdbzb9INPKPrh7Sc5QCyGQJefNz1ijyIVMaov5fRdCWcZEjwhGFCoJcHY4zzm90DZq9Of3O7viixH6bF3UVD0EnLd5V+3c3WobW+gRy3zA0A3kSh5w3vX5VdPr5l4qNl/PpS7ZwGiOFSMNDlkDnZZFanBLB08+/G+mM8JlurtRctiZqc7Xw7ZZZ8oSqH5Rh3CrlbYzSg1cEZnS30Z+Tz9zh4P41j7m+whjovxUKdMVDtDX8W/NUFqEAsPuFRc91gFYOTz85lFkLpyvI1xbQCQo+06pa1R2oJBphCreZ1QV9BepP9bBSxj9IzLRaqSCNLqCqSkdDpXWVSCUkYn9E9krHveGpBDfL1xl4/00ZNX3iK3rtFKNO8/mX9OWlf9FZOZN9LeMDB8nNSvxKgIBlBmR6JOEx+s7ft3gv9wlUYX6NmcQkmeYp73g3qj5oiOkf3tz2EkwAInWEnyLtM51X3DJw443gzwWg6Eq5uxA+XVxpK5wAeDlRlVKyXSMBaFF4=
-   file:
+  file:
     - build/dist/mworker.darwin-amd64.tar.gz
     - build/dist/mworker.linux-amd64.tar.gz
   skip_cleanup: true
