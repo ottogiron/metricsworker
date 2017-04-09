@@ -36,9 +36,10 @@ type processor struct {
 func NewProcessor(adapter fworkerprocessor.Adapter, options ...Option) Processor {
 	//Initialize and set defaults
 	p := &processor{
-		concurrency: 1,
-		waitTimeout: time.Millisecond * 500,
-		adapter:     adapter,
+		concurrency:    1,
+		waitTimeout:    time.Millisecond * 500,
+		adapter:        adapter,
+		workerRegistry: make(map[string]worker.Worker),
 	}
 
 	//Apply user defined options
@@ -109,12 +110,13 @@ func (p *processor) handleFailedTask(taskResult *taskResult) {
 func (p *processor) process(task interface{}, workersIDS ...string) <-chan taskResult {
 	out := make(chan taskResult)
 	var wg sync.WaitGroup
-
+	wg.Add(len(workersIDS))
 	for _, id := range workersIDS {
 		w := p.workerRegistry[id]
 		go func(w worker.Worker, workerID string) {
 			err := w.Execute(task)
 			out <- taskResult{workerID: workerID, err: err}
+			wg.Done()
 		}(w, id)
 	}
 
