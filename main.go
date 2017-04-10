@@ -20,18 +20,6 @@ const adapterFactoryName = "rabbit"
 var concurrencyFlag int
 var waitTimeoutFlag int
 
-//Rabbit configurations
-var uriKeyFlag string
-var routingKeyFlag string
-var bindingKeyFlag string
-
-// queue flags
-var queueNameFlag string
-var queueDurableFlag bool
-var queueDeleteWhenUsedFlag bool
-var queueExclusiveFlag bool
-var queueNowaitFlag bool
-
 func init() {
 	//Processor init
 	flag.IntVar(&concurrencyFlag, "concurrency", 1, "Number of concurrent set of workers running")
