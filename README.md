@@ -37,7 +37,7 @@ mworker --concurrency=1 \
     --rabbit-queue_name=hello \
     --rabbit-consumer_auto_ack=true \
     --rabbit-exchange="test-exchange" \
-    --rabbit-routing_key="text-key"
+    --rabbit-routing_key="test-key"
 ```
 
 
