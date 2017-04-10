@@ -8,5 +8,6 @@ services:
     image: rabbitmq:3.6-management
     ports:
       - "4369:4369"
-      - "15672:15672" 
+      - "15672:15672"
+      - "5672:5672" 
   
