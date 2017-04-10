@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"log"
+
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	"github.com/ottogiron/metricsworker/worker"
 )
@@ -30,6 +32,7 @@ type processor struct {
 	//Time the processor will wait until new tasks are available
 	waitTimeout    time.Duration
 	workerRegistry map[string]worker.Worker
+	logger         *log.Logger
 }
 
 //NewProcessor returns a new instance of a processor
@@ -40,6 +43,7 @@ func NewProcessor(adapter fworkerprocessor.Adapter, options ...Option) Processor
 		waitTimeout:    time.Millisecond * 500,
 		adapter:        adapter,
 		workerRegistry: make(map[string]worker.Worker),
+		logger:         log.New(nil, "", 0),
 	}
 
 	//Apply user defined options
@@ -82,7 +86,7 @@ func (p *processor) Start() error {
 
 						for taskResult := range out {
 							if taskResult.err != nil {
-								fmt.Printf("Error Failed to execute task for worker id: %s in first attempt retrying", taskResult.workerID)
+								p.logger.Printf("Error Failed to execute task for worker id: %s in first attempt retrying", taskResult.workerID)
 							}
 						}
 
@@ -103,7 +107,7 @@ func (p *processor) Start() error {
 }
 
 func (p *processor) handleFailedTask(taskResult *taskResult) {
-	fmt.Print("Do something with this failed task", taskResult)
+	p.logger.Println("Handling failed task")
 }
 
 //Process will process a task in all the available workers asynchronously

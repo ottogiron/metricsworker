@@ -8,35 +8,84 @@ import (
 
 	"reflect"
 
+	"io/ioutil"
+	"log"
+
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	"github.com/ottogiron/metricsworker/worker"
 )
 
+var successfullJobs = []fworkerprocessor.Message{
+	fworkerprocessor.Message{Payload: []byte("message 1")},
+	fworkerprocessor.Message{Payload: []byte("message 2")},
+	fworkerprocessor.Message{Payload: []byte("message 3")},
+	fworkerprocessor.Message{Payload: []byte("message 4")},
+	fworkerprocessor.Message{Payload: []byte("message 5")},
+	fworkerprocessor.Message{Payload: []byte("message 6")},
+}
+
+type testMessagesHandler func(context context.Context) (<-chan fworkerprocessor.Message, error)
+
 type processorAdapterMock struct {
-	tb       testing.TB
-	messages []fworkerprocessor.Message
+	fworkerprocessor.Adapter
+	handler  testMessagesHandler
+	openErr  error
+	closeErr error
 }
 
 func (s *processorAdapterMock) Open() error {
+	if s.openErr != nil {
+		return s.openErr
+	}
 	return nil
 }
 
 func (s *processorAdapterMock) Close() error {
+	if s.closeErr != nil {
+		return s.closeErr
+	}
 	return nil
 }
 
 func (s *processorAdapterMock) Messages(context context.Context) (<-chan fworkerprocessor.Message, error) {
-	msgChannel := make(chan fworkerprocessor.Message)
-	go func() {
-		for _, message := range s.messages {
-			msgChannel <- message
-		}
-	}()
-	return msgChannel, nil
+	if s.handler == nil {
+		return nil, errors.New("Please define a handler function for this mock handler")
+	}
+	return s.handler(context)
+}
+
+func mockMessagesHandler(messages []fworkerprocessor.Message) testMessagesHandler {
+	return func(context context.Context) (<-chan fworkerprocessor.Message, error) {
+		msgChannel := make(chan fworkerprocessor.Message)
+		go func() {
+			for _, message := range messages {
+				msgChannel <- message
+			}
+			close(msgChannel)
+		}()
+		return msgChannel, nil
+	}
+}
+
+func mockSleepMessagesHandler(duration time.Duration) testMessagesHandler {
+	return func(context context.Context) (<-chan fworkerprocessor.Message, error) {
+		msgChannel := make(chan fworkerprocessor.Message)
+		go func() {
+			time.Sleep(duration)
+			msgChannel <- fworkerprocessor.Message{}
+			close(msgChannel)
+
+		}()
+		return msgChannel, nil
+	}
 }
 
 func newTestProcessor(adapter fworkerprocessor.Adapter) *processor {
-	p := NewProcessor(adapter)
+	p := NewProcessor(
+		adapter,
+		SetLogger(log.New(ioutil.Discard, "", 0)),
+	)
+
 	return p.(*processor)
 }
 
@@ -47,20 +96,56 @@ func Test_processor_Start(t *testing.T) {
 		waitTimeout    time.Duration
 		workerRegistry map[string]worker.Worker
 	}
+
+	logger := log.New(ioutil.Discard, "", 0)
+
+	failedTaskError := errors.New("Failed task")
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{
+			"Process successful tasks",
+			fields{
+				&processorAdapterMock{
+					handler: mockMessagesHandler(successfullJobs),
+				},
+				1,
+				time.Millisecond * 200,
+				map[string]worker.Worker{
+					"distincName": &mockWorker{err: nil},
+					"hourlyLog":   &mockWorker{err: failedTaskError},
+				},
+			},
+			false,
+		},
+		{
+			"Timed out",
+			fields{
+				&processorAdapterMock{
+					handler: mockSleepMessagesHandler(time.Millisecond * 500),
+				},
+				1,
+				200,
+				map[string]worker.Worker{
+					"distincName": &mockWorker{err: nil},
+					"hourlyLog":   &mockWorker{err: failedTaskError},
+				},
+			},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &processor{
-				adapter:        tt.fields.adapter,
-				concurrency:    tt.fields.concurrency,
-				waitTimeout:    tt.fields.waitTimeout,
-				workerRegistry: tt.fields.workerRegistry,
+			p := NewProcessor(
+				tt.fields.adapter,
+				SetConcurrency(tt.fields.concurrency),
+				SetWaitTimeout(tt.fields.waitTimeout),
+				SetLogger(logger),
+			)
+			for id, worker := range tt.fields.workerRegistry {
+				p.Register(id, worker)
 			}
 			if err := p.Start(); (err != nil) != tt.wantErr {
 				t.Errorf("processor.Start() error = %v, wantErr %v", err, tt.wantErr)
@@ -165,13 +250,20 @@ func Test_processor_process(t *testing.T) {
 	}
 }
 
+type testWorkerHandler func(task interface{})
+
 type mockWorker struct {
-	err error
+	err     error
+	handler testWorkerHandler
 }
 
 func (mw *mockWorker) Execute(task interface{}) error {
 	if mw.err != nil {
 		return mw.err
+	}
+
+	if mw.handler != nil {
+		mw.handler(task)
 	}
 	return nil
 }
