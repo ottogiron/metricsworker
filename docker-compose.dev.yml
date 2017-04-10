@@ -9,5 +9,14 @@ services:
     ports:
       - "4369:4369"
       - "15672:15672"
-      - "5672:5672" 
+      - "5672:5672"
+  mongo: 
+    image: mongo:3.0
+    ports:
+      - "27017:27017"
+  postgres:
+    image: postgres:9.6
+    ports: 
+      - "5432:5432"
+   
   
