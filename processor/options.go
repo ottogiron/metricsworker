@@ -16,7 +16,7 @@ func SetConcurrency(concurrency int) Option {
 //SetWaitTimeout sets the time in milliseconds the processor will wait (keep the connection open) for new tasks
 func SetWaitTimeout(waitTimeout time.Duration) Option {
 	return func(p *processor) {
-		p.waitTimeout = time.Millisecond * waitTimeout
+		p.waitTimeout = waitTimeout
 	}
 }
 

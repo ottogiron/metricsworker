@@ -8,8 +8,6 @@ import (
 
 	"time"
 
-	"fmt"
-
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	_ "github.com/ferrariframework/ferrariworker/processor/rabbit"
 	"github.com/ottogiron/metricsworker/processor"
@@ -48,7 +46,6 @@ func init() {
 		name := adapterFactoryName + "-" + property.Name
 		switch property.Type {
 		case fworkerprocessor.PropertyTypeString:
-			fmt.Println("Default value is ", property)
 			defaultValue := property.Default.(string)
 			flag.String(name, defaultValue, property.Description)
 		case fworkerprocessor.PropertyTypeInt:
@@ -63,6 +60,8 @@ func init() {
 
 func main() {
 	flag.Parse()
+
+	//Get the processor adapter
 	factory, err := fworkerprocessor.AdapterFactory(adapterFactoryName)
 	if err != nil {
 		log.Printf("Failed to load adapter factory for %s %s", adapterFactoryName, err)
@@ -70,20 +69,39 @@ func main() {
 	}
 	adapter := factory.New(rabbitAdapterConfig())
 
+	//Configure tasks processor
 	proc := processor.New(
 		adapter,
 		processor.SetConcurrency(concurrencyFlag),
 		processor.SetWaitTimeout(time.Duration(waitTimeoutFlag)),
 	)
 
+	//Register workers
 	proc.Register("distincName", &rabbit.DistinctNameWorker{})
 
+	//Starts new processor
+	log.Printf("Waiting for tasks for %dms", waitTimeoutFlag)
 	err = proc.Start()
 	if err != nil {
-		log.Fatal("Failed to start tasks processor")
+		log.Fatal("Failed to start tasks processor ", err)
 	}
 }
 
 func rabbitAdapterConfig() fworkerprocessor.AdapterConfig {
-	return nil
+
+	//Load all the properties values
+
+	//initialize adapter available properties
+	rabbitConfigurationSchema, err := fworkerprocessor.AdapterSchema(adapterFactoryName)
+
+	if err != nil {
+		log.Fatalf("Failed to retrieve configuration schema for %s %s", adapterFactoryName, err)
+	}
+	config := fworkerprocessor.NewAdapterConfig()
+	for _, property := range rabbitConfigurationSchema.Properties {
+		name := adapterFactoryName + "-" + property.Name
+		flag := flag.Lookup(name)
+		config.Set(property.Name, flag.Value.String())
+	}
+	return config
 }

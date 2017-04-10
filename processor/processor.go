@@ -40,7 +40,7 @@ func New(adapter fworkerprocessor.Adapter, options ...Option) Processor {
 	//Initialize and set defaults
 	p := &processor{
 		concurrency:    1,
-		waitTimeout:    time.Millisecond * 500,
+		waitTimeout:    500,
 		adapter:        adapter,
 		workerRegistry: make(map[string]worker.Worker),
 		logger:         log.New(nil, "", 0),
