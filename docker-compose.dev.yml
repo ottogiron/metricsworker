@@ -2,6 +2,11 @@ version: '2'
 services:
   redis:
     image: redis:3.0
+    ports: 
+      - "6379:6379"
   rabbit:
-    image: rabbitmq:3.6-management 
+    image: rabbitmq:3.6-management
+    ports:
+      - "4369:4369"
+      - "15672:15672" 
   

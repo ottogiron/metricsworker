@@ -81,7 +81,7 @@ func mockSleepMessagesHandler(duration time.Duration) testMessagesHandler {
 }
 
 func newTestProcessor(adapter fworkerprocessor.Adapter) *processor {
-	p := NewProcessor(
+	p := New(
 		adapter,
 		SetLogger(log.New(ioutil.Discard, "", 0)),
 	)
@@ -138,7 +138,7 @@ func Test_processor_Start(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := NewProcessor(
+			p := New(
 				tt.fields.adapter,
 				SetConcurrency(tt.fields.concurrency),
 				SetWaitTimeout(tt.fields.waitTimeout),

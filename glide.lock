@@ -1,10 +1,13 @@
-hash: 0364da5a73185c27e129992039430d13728d79fd4ec8656a0503c8d1962ab251
-updated: 2017-04-08T18:48:17.765639443-06:00
+hash: 666c78898d3b70e7a60a7af9d79d96b0710edd0553062723a0616ad70b829ac6
+updated: 2017-04-10T15:24:42.350035728-06:00
 imports:
 - name: github.com/ferrariframework/ferrariworker
-  version: edfe9f005587c49537407fee0b7ffc570c6039f5
+  version: d3bfd540f87f807dca74f58cb089462fd7a366a4
   subpackages:
   - processor
+  - processor/rabbit
 - name: github.com/spf13/cast
   version: 24b6558033ffe202bf42f0f3b870dcc798dd2ba8
+- name: github.com/streadway/amqp
+  version: cb4fb930736ebd61a54da180a6aa4e92b206ff13
 testImports: []

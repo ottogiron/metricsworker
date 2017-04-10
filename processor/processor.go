@@ -35,8 +35,8 @@ type processor struct {
 	logger         *log.Logger
 }
 
-//NewProcessor returns a new instance of a processor
-func NewProcessor(adapter fworkerprocessor.Adapter, options ...Option) Processor {
+//New returns a new instance of a processor
+func New(adapter fworkerprocessor.Adapter, options ...Option) Processor {
 	//Initialize and set defaults
 	p := &processor{
 		concurrency:    1,
