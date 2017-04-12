@@ -3,6 +3,8 @@ go:
 - 1.8
 services:
   - redis-server
+  - mongodb
+  - postgresql
 before_install:
 - sudo add-apt-repository ppa:masterminds/glide -y
 - sudo apt-get update -q

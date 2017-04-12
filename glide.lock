@@ -1,5 +1,5 @@
-hash: 70aeb4742ea7f801186ab24c64379a87628176684d5150d4061faa2158857d14
-updated: 2017-04-11T17:15:51.090515064-06:00
+hash: 83e48d07f92ef944156ae51a728cb8f1b2d1425be172628160c0ab31662674fb
+updated: 2017-04-11T23:45:42.354573366-06:00
 imports:
 - name: github.com/ferrariframework/ferrariworker
   version: d3bfd540f87f807dca74f58cb089462fd7a366a4
@@ -18,4 +18,11 @@ imports:
   version: 24b6558033ffe202bf42f0f3b870dcc798dd2ba8
 - name: github.com/streadway/amqp
   version: cb4fb930736ebd61a54da180a6aa4e92b206ff13
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
 testImports: []

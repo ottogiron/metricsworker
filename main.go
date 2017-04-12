@@ -22,13 +22,17 @@ var concurrencyFlag int
 var waitTimeoutFlag int
 var redisAddressFlag string
 var redisDBFlag int
+var mongoHostFlag string
+var mongoEventsDBFlag string
 
 func init() {
 	//Processor init
 	flag.IntVar(&concurrencyFlag, "concurrency", 1, "Number of concurrent set of workers running")
 	flag.IntVar(&waitTimeoutFlag, "wait-timeout", 500, "Time to wait in miliseconds until new jobs are available in rabbit ")
-	flag.StringVar(&redisAddressFlag, "redis-address", "localhost:6379", "Redis address ")
+	flag.StringVar(&redisAddressFlag, "redis-address", "localhost:6379", "Redis address example localhost:6779 ")
 	flag.IntVar(&redisDBFlag, "redis-db", 0, "Redis DB ")
+	flag.StringVar(&mongoHostFlag, "mongo-host", "localhost", "mongo host localhost")
+	flag.StringVar(&mongoEventsDBFlag, "mongo-events-db", "events", "mongo events database")
 
 	//initialize adapter available properties
 	rabbitConfigurationSchema, err := fworkerprocessor.AdapterSchema(adapterFactoryName)
@@ -69,9 +73,17 @@ func main() {
 		processor.SetWaitTimeout(time.Duration(waitTimeoutFlag)),
 	)
 
-	//Register workers
+	//Workers initialization
+	//distinctName
 	redisClient := redisClient()
-	proc.Register("distincName", rabbit.NewDistincNameWorker(redisClient))
+	distincNameWorker := rabbit.NewDistincNameWorker(redisClient)
+
+	//hourlyLog
+	hourlyLogWorker := rabbit.NewHourlyLogWorker(mongoEventsDBFlag, mongoHostFlag)
+
+	//Register workers
+	proc.Register("distincName", distincNameWorker)
+	proc.Register("hourlyLog", hourlyLogWorker)
 
 	//Starts new processor
 	log.Printf("Waiting for tasks for %dms", waitTimeoutFlag)

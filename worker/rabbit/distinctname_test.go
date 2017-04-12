@@ -26,20 +26,6 @@ func testRedisClient(t *testing.T) (*redis.Client, func()) {
 	}
 }
 
-var validPayload = []byte(`{
-  "username": "kodingbot",  
-  "count": 12412414,    
-  "metric": "kite_call" 
-}
-`)
-
-var invalidPayload = []byte(`{
-  "username": "kodingbot"  
-  "count": 12412414,    
-  "metric": "kite_call" 
-}
-`)
-
 func TestDistinctNameWorker_Execute(t *testing.T) {
 	client, clean := testRedisClient(t)
 
@@ -106,6 +92,7 @@ func TestDistinctNameWorker_Execute(t *testing.T) {
 
 			if !ok {
 				t.Errorf("DistinctNameWorker.Execute() could not unmarshall delivery")
+				return
 			}
 
 			metric, err := worker.UnmarshallCountMetric(delivery.Body)
