@@ -4,5 +4,5 @@ package worker
 type CountMetric struct {
 	UserName string `json:"username"`
 	Count    int64  `json:"count"`
-	Metric   string `json:"kite_call"`
+	Metric   string `json:"metric"`
 }

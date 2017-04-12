@@ -20,13 +20,15 @@ const adapterFactoryName = "rabbit"
 //Processor configurations
 var concurrencyFlag int
 var waitTimeoutFlag int
-var redisAddress string
+var redisAddressFlag string
+var redisDBFlag int
 
 func init() {
 	//Processor init
 	flag.IntVar(&concurrencyFlag, "concurrency", 1, "Number of concurrent set of workers running")
 	flag.IntVar(&waitTimeoutFlag, "wait-timeout", 500, "Time to wait in miliseconds until new jobs are available in rabbit ")
-	flag.StringVar(&redisAddress, "redis-address", "localhost:6379", "Redis address ")
+	flag.StringVar(&redisAddressFlag, "redis-address", "localhost:6379", "Redis address ")
+	flag.IntVar(&redisDBFlag, "redis-db", 0, "Redis DB ")
 
 	//initialize adapter available properties
 	rabbitConfigurationSchema, err := fworkerprocessor.AdapterSchema(adapterFactoryName)
@@ -82,9 +84,9 @@ func main() {
 func redisClient() *redis.Client {
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     redisAddress,
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     redisAddressFlag,
+		Password: "",          // no password set
+		DB:       redisDBFlag, // use default DB
 	})
 
 	_, err := client.Ping().Result()
