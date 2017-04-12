@@ -18,5 +18,10 @@ services:
     image: postgres:9.6
     ports: 
       - "5432:5432"
+      #this is just for testing purposes
+    environment:
+      - POSTGRES_PASSWORD=mysecret
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
    
   
