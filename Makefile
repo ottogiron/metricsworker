@@ -1,6 +1,6 @@
 # Meta info
 NAME := mworker
-VERSION := 0.1.0
+VERSION := 0.2.0
 MAINTAINER := "Otto Giron <ottog2486@gmail.com"
 SOURCE_URL := https://github.com/ottogiron/metricsworker
 DATE := $(shell date -u +%Y%m%d.%H%M%S)
