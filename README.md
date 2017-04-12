@@ -1,6 +1,15 @@
 # Metrics Workers
 
-A set of workers processing metrics from RabbitMQ.
+A set of workers processing metrics from RabbitMQ. 
+
+Available worker are:
+
+* distinctName
+* hourlyLog
+* accountName
+
+
+***Note***: Workers consume and process metrics from a single queue concurrently.
 
 [![Build Status](https://travis-ci.org/ottogiron/metricsworker.svg?branch=master)](https://travis-ci.org/ottogiron/metricsworker)
 [![GoDoc](https://godoc.org/github.com/ottogiron/metricsworker?status.svg)](https://godoc.org/github.com/ottogiron/metricsworker)
@@ -47,8 +56,20 @@ mworker --concurrency=1 \
 mworker [flags]
 
 Flags :
-  -concurrency int
+-concurrency int
         Number of concurrent set of workers running (default 1)
+  -mongo-events-db string
+        mongo events database (default "events")
+  -mongo-host string
+        mongo host localhost (default "localhost")
+  -postgres-db string
+        postgres database (default "postgres")
+  -postgres-host string
+        postgres host (default "localhost")
+  -postgres-password string
+        postgres password (default "mysecret")
+  -postgres-user string
+        postgres user (default "postgres")
   -rabbit-binding_wait
         Binding wait
   -rabbit-consumer_auto_ack
@@ -85,6 +106,10 @@ Flags :
         Routing Key
   -rabbit-uri string
         Rabbit instance uri e.g. amqp://guest:guest@localhost:5672/ (default "amqp://guest:guest@localhost:5672/")
+  -redis-address string
+        Redis address example localhost:6779  (default "localhost:6379")
+  -redis-db int
+        Redis DB
   -wait-timeout int
         Time to wait in miliseconds until new jobs are available in rabbit  (default 500)
 ```
