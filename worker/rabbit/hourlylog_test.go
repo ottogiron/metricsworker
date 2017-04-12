@@ -48,13 +48,38 @@ func TestHourlyLogWorker_Execute(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"Invalid payload",
+			args{
+				amqp.Delivery{
+					Body:      invalidPayload,
+					Timestamp: time.Now(),
+				},
+			},
+			true,
+		},
+		{
+			"Not a rabbit delivery",
+			args{
+				amqp.Delivery{
+					Body:      invalidPayload,
+					Timestamp: time.Now(),
+				},
+			},
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w, collection, clean := newMongoTestSession(t)
 			defer clean()
-			if err := w.Execute(tt.args.task); (err != nil) != tt.wantErr {
+			err := w.Execute(tt.args.task)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("HourlyLogWorker.Execute() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if err != nil {
 				return
 			}
 

@@ -11,7 +11,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var _ worker.Worker = (*DistinctNameWorker)(nil)
+var _ worker.Worker = (*HourlyLogWorker)(nil)
 
 const eventsCollectionName = "hourly_events"
 
@@ -40,9 +40,9 @@ func (w *HourlyLogWorker) Execute(task interface{}) error {
 		return fmt.Errorf("Failed to unmarshall rabbit delivery body (%s) %s ", string(delivery.Body), err)
 	}
 	now := time.Now().UTC()
-
 	//I'm assuming the time in which the event happened is the rabbit delivery timestamp
 	elapsed := now.Sub(delivery.Timestamp).Minutes()
+
 	if elapsed <= 60 {
 		session, err := mgo.Dial(w.mongoHosts)
 		if err != nil {

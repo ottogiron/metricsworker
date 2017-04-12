@@ -2,15 +2,19 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"log"
 	"os"
 
 	"time"
 
+	"database/sql"
+
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	_ "github.com/ferrariframework/ferrariworker/processor/rabbit"
 	"github.com/go-redis/redis"
+	_ "github.com/lib/pq"
 	"github.com/ottogiron/metricsworker/processor"
 	"github.com/ottogiron/metricsworker/worker/rabbit"
 )
@@ -25,6 +29,11 @@ var redisDBFlag int
 var mongoHostFlag string
 var mongoEventsDBFlag string
 
+var postgresUserFlag string
+var postgresPasswordFlag string
+var postgresHostFlag string
+var postgresDBFlag string
+
 func init() {
 	//Processor init
 	flag.IntVar(&concurrencyFlag, "concurrency", 1, "Number of concurrent set of workers running")
@@ -33,6 +42,11 @@ func init() {
 	flag.IntVar(&redisDBFlag, "redis-db", 0, "Redis DB ")
 	flag.StringVar(&mongoHostFlag, "mongo-host", "localhost", "mongo host localhost")
 	flag.StringVar(&mongoEventsDBFlag, "mongo-events-db", "events", "mongo events database")
+
+	flag.StringVar(&postgresUserFlag, "postgres-user", "postgres", "postgres user")
+	flag.StringVar(&postgresPasswordFlag, "postgres-password", "mysecret", "postgres password")
+	flag.StringVar(&postgresHostFlag, "postgres-host", "localhost", "postgres host")
+	flag.StringVar(&postgresDBFlag, "postgres-db", "postgres", "postgres database")
 
 	//initialize adapter available properties
 	rabbitConfigurationSchema, err := fworkerprocessor.AdapterSchema(adapterFactoryName)
@@ -81,9 +95,13 @@ func main() {
 	//hourlyLog
 	hourlyLogWorker := rabbit.NewHourlyLogWorker(mongoEventsDBFlag, mongoHostFlag)
 
+	//accountName
+	accountNameWorker := rabbit.NewAccountNameWorker(postgresDB())
+
 	//Register workers
 	proc.Register("distincName", distincNameWorker)
 	proc.Register("hourlyLog", hourlyLogWorker)
+	proc.Register("accountName", accountNameWorker)
 
 	//Starts new processor
 	log.Printf("Waiting for tasks for %dms", waitTimeoutFlag)
@@ -91,6 +109,15 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to start tasks processor ", err)
 	}
+}
+
+func postgresDB() *sql.DB {
+	connectionString := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable	", postgresUserFlag, postgresPasswordFlag, postgresHostFlag, postgresDBFlag)
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Fatalf("Failed to open postgres connection %s", err)
+	}
+	return db
 }
 
 func redisClient() *redis.Client {
