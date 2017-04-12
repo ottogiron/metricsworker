@@ -1,11 +1,19 @@
-hash: 666c78898d3b70e7a60a7af9d79d96b0710edd0553062723a0616ad70b829ac6
-updated: 2017-04-10T15:24:42.350035728-06:00
+hash: 70aeb4742ea7f801186ab24c64379a87628176684d5150d4061faa2158857d14
+updated: 2017-04-11T17:15:51.090515064-06:00
 imports:
 - name: github.com/ferrariframework/ferrariworker
   version: d3bfd540f87f807dca74f58cb089462fd7a366a4
   subpackages:
   - processor
   - processor/rabbit
+- name: github.com/go-redis/redis
+  version: 313a8d7fab7884cd2e80ca9d9d0a5ecb26ac66a6
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
 - name: github.com/spf13/cast
   version: 24b6558033ffe202bf42f0f3b870dcc798dd2ba8
 - name: github.com/streadway/amqp

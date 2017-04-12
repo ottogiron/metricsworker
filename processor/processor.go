@@ -8,6 +8,8 @@ import (
 
 	"log"
 
+	"os"
+
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	"github.com/ottogiron/metricsworker/worker"
 )
@@ -43,7 +45,7 @@ func New(adapter fworkerprocessor.Adapter, options ...Option) Processor {
 		waitTimeout:    500,
 		adapter:        adapter,
 		workerRegistry: make(map[string]worker.Worker),
-		logger:         log.New(nil, "", 0),
+		logger:         log.New(os.Stdout, "", 0),
 	}
 
 	//Apply user defined options
@@ -86,7 +88,7 @@ func (p *processor) Start() error {
 
 						for taskResult := range out {
 							if taskResult.err != nil {
-								p.logger.Printf("Error Failed to execute task for worker id: %s in first attempt retrying", taskResult.workerID)
+								p.logger.Printf("Error Failed to execute task for worker id: %s %s in first attempt retrying", taskResult.workerID, taskResult.err)
 							}
 						}
 

@@ -10,6 +10,7 @@ import (
 
 	fworkerprocessor "github.com/ferrariframework/ferrariworker/processor"
 	_ "github.com/ferrariframework/ferrariworker/processor/rabbit"
+	"github.com/go-redis/redis"
 	"github.com/ottogiron/metricsworker/processor"
 	"github.com/ottogiron/metricsworker/worker/rabbit"
 )
@@ -19,11 +20,13 @@ const adapterFactoryName = "rabbit"
 //Processor configurations
 var concurrencyFlag int
 var waitTimeoutFlag int
+var redisAddress string
 
 func init() {
 	//Processor init
 	flag.IntVar(&concurrencyFlag, "concurrency", 1, "Number of concurrent set of workers running")
 	flag.IntVar(&waitTimeoutFlag, "wait-timeout", 500, "Time to wait in miliseconds until new jobs are available in rabbit ")
+	flag.StringVar(&redisAddress, "redis-address", "localhost:6379", "Redis address ")
 
 	//initialize adapter available properties
 	rabbitConfigurationSchema, err := fworkerprocessor.AdapterSchema(adapterFactoryName)
@@ -65,7 +68,8 @@ func main() {
 	)
 
 	//Register workers
-	proc.Register("distincName", &rabbit.DistinctNameWorker{})
+	redisClient := redisClient()
+	proc.Register("distincName", rabbit.NewDistincNameWorker(redisClient))
 
 	//Starts new processor
 	log.Printf("Waiting for tasks for %dms", waitTimeoutFlag)
@@ -73,6 +77,21 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to start tasks processor ", err)
 	}
+}
+
+func redisClient() *redis.Client {
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisAddress,
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	_, err := client.Ping().Result()
+	if err != nil {
+		log.Fatalf("Failed to connect to redis %s", err)
+	}
+	return client
 }
 
 func rabbitAdapterConfig() fworkerprocessor.AdapterConfig {

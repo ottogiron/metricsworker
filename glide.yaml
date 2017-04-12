@@ -5,3 +5,5 @@ import:
   subpackages:
   - processor
   - processor/rabbit
+- package: github.com/go-redis/redis
+  version: ^6.1.0
